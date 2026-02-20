@@ -8,6 +8,12 @@ export const education = [
       'AWS Certified Solutions Architect — Associate',
     ],
   },
+  {
+    degree: 'A.S. Engineering Science',
+    school: 'Borough of Manhattan Community College (BMCC)',
+    period: 'Jan 2017 — May 2019',
+    highlights: [],
+  },
 ]
 
 export const certifications = [
