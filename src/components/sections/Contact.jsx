@@ -3,9 +3,26 @@ import { Mail, Github, Linkedin } from 'lucide-react'
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [status, setStatus] = useState('idle') // idle | sending | success | error
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setStatus('sending')
+    try {
+      const res = await fetch('https://formspree.io/f/xjgeeqoe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (res.ok) {
+        setStatus('success')
+        setForm({ name: '', email: '', message: '' })
+      } else {
+        setStatus('error')
+      }
+    } catch {
+      setStatus('error')
+    }
   }
 
   const handleChange = (e) => {
@@ -47,11 +64,22 @@ export default function Contact() {
               className={`${inputStyles} resize-none`}
               required
             />
+            {status === 'success' && (
+              <p className="text-sm text-white bg-white/20 rounded-lg px-4 py-3">
+                Message sent! I'll get back to you soon.
+              </p>
+            )}
+            {status === 'error' && (
+              <p className="text-sm text-white bg-red-500/30 rounded-lg px-4 py-3">
+                Something went wrong. Please try again or email me directly.
+              </p>
+            )}
             <button
               type="submit"
-              className="w-full px-6 py-3 text-lg font-medium rounded-lg bg-white text-teal-600 hover:bg-white/90 hover:shadow-lg transition-all"
+              disabled={status === 'sending'}
+              className="w-full px-6 py-3 text-lg font-medium rounded-lg bg-white text-teal-600 hover:bg-white/90 hover:shadow-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Send Message
+              {status === 'sending' ? 'Sending...' : 'Send Message'}
             </button>
           </form>
           <div className="reveal space-y-6">
